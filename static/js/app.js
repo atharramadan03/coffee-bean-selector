@@ -267,7 +267,6 @@ function showQRDialog() {
   if (existing) existing.remove();
 
   const APP_URL = 'https://coffee-bean-selector.up.railway.app/';
-  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(APP_URL)}&color=4a2c17&bgcolor=faf5ee`;
 
   const overlay = document.createElement('div');
   overlay.id = 'qrDialog';
@@ -276,16 +275,16 @@ function showQRDialog() {
     <div class="dialog-box animate-in" style="max-width:360px;text-align:center">
       <div class="dialog-icon" style="font-size:1.6rem">☕</div>
       <div class="dialog-title">Coffee Bean AI</div>
-      <div class="dialog-msg" style="margin-bottom:16px">Scan QR Code untuk membuka aplikasi di perangkat lain atau bagikan ke mahasiswa.</div>
-      <div style="background:var(--parchment);border:2px solid var(--br-warm);border-radius:var(--r-md);padding:16px;display:inline-block;margin-bottom:16px">
-        <img src="${qrApiUrl}" alt="QR Code" style="width:180px;height:180px;border-radius:8px;display:block" />
+      <div class="dialog-msg" style="margin-bottom:16px">Scan QR Code untuk membuka aplikasi di perangkat lain.</div>
+      <div style="background:var(--parchment);border:2px solid var(--br-warm);border-radius:var(--r-md);padding:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
+        <canvas id="qrCanvas" style="border-radius:6px"></canvas>
       </div>
       <div style="font-size:0.75rem;color:var(--ink-soft);margin-bottom:16px;word-break:break-all;background:rgba(184,115,51,0.08);padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--br-warm)">
         <i class="bi bi-link-45deg"></i> ${APP_URL}
       </div>
       <div class="dialog-actions" style="justify-content:center;gap:10px">
         <button class="dialog-btn-cancel" id="qrClose">Tutup</button>
-        <button class="dialog-btn-confirm" onclick="navigator.clipboard.writeText('${APP_URL}').then(()=>toast('Link disalin!','success'))">
+        <button class="dialog-btn-confirm" id="qrCopy">
           <i class="bi bi-clipboard"></i> Salin Link
         </button>
       </div>
@@ -294,12 +293,31 @@ function showQRDialog() {
   document.body.appendChild(overlay);
   requestAnimationFrame(() => overlay.classList.add('show'));
 
+  // Generate QR menggunakan library qrcodejs via CDN
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+  script.onload = () => {
+    const canvas = document.getElementById('qrCanvas');
+    new QRCode(canvas, {
+      text: APP_URL,
+      width: 180,
+      height: 180,
+      colorDark: '#4a2c17',
+      colorLight: '#faf5ee',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  };
+  document.head.appendChild(script);
+
   const close = () => {
     overlay.classList.remove('show');
     setTimeout(() => overlay.remove(), 250);
   };
 
   document.getElementById('qrClose').onclick = close;
+  document.getElementById('qrCopy').onclick = () => {
+    navigator.clipboard.writeText(APP_URL).then(() => toast('Link disalin!','success'));
+  };
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   document.addEventListener('keydown', function esc(e) {
     if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
