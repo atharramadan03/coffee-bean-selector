@@ -1,7 +1,7 @@
 flask==3.0.3
 flask-cors==4.0.1
 tensorflow==2.21.0
-Pillow==10.3.0
+Pillow==11.0.0
 numpy==1.26.4
 gunicorn==22.0.0
 scikit-learn==1.4.2
