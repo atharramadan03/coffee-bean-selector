@@ -26,6 +26,7 @@
       <button class="nav-link" onclick="goTo('history')"><i class="bi bi-clock-history"></i> Riwayat</button>
       <button class="nav-link" onclick="goTo('alur-kerja')"><i class="bi bi-diagram-3"></i> Cara Kerja</button>
       <button class="nav-link" onclick="goTo('about')"><i class="bi bi-info-circle"></i> Tentang</button>
+      <button class="nav-link" onclick="showQRDialog()" style="background:rgba(184,115,51,0.15);border:1px solid rgba(184,115,51,0.35);border-radius:var(--r-pill);padding:6px 14px"><i class="bi bi-qr-code"></i> QR</button>
     </div>
     <button class="nav-menu-btn" id="navMenuBtn" onclick="toggleMobileNav()" aria-label="Menu">
       <i class="bi bi-list"></i>
@@ -322,28 +323,39 @@
       <div class="about-card">
         <div class="about-card-icon"><i class="bi bi-bullseye"></i></div>
         <h4>Tujuan Aplikasi</h4>
-        <p>Membantu pecinta kopi, barista, pemilik kedai, petani, dan masyarakat mengidentifikasi biji kopi secara otomatis dan akurat menggunakan teknologi AI tanpa keahlian khusus.</p>
+        <p>Membantu pecinta kopi, barista, pemilik kedai, petani, dan masyarakat mengidentifikasi jenis biji kopi secara otomatis dan akurat menggunakan teknologi AI — tanpa keahlian khusus di bidang machine learning.</p>
+        <p style="margin-top:10px;font-size:0.85rem;color:var(--ink-soft)">Aplikasi ini dikembangkan sebagai proyek <strong>edukasi Machine Learning</strong> untuk mendemonstrasikan penerapan computer vision dalam dunia nyata, khususnya pada industri kopi Indonesia.</p>
       </div>
       <div class="about-card">
         <div class="about-card-icon"><i class="bi bi-database-fill"></i></div>
         <h4>Dataset</h4>
-        <p>Dataset dari Kaggle: <em>Coffee Bean Dataset Resized 224×224</em> oleh gpiosenka. Total ±1.600 gambar dibagi ke 4 kelas. Augmentasi: rotasi, flip, zoom, brightness.</p>
+        <p>Dataset bersumber dari Kaggle: <em>Coffee Bean Dataset Resized 224×224</em> oleh <strong>gpiosenka</strong>. Total ±1.600 gambar terbagi ke 4 kelas (Dark, Green, Light, Medium). Proses training dilakukan di <strong>Google Colab</strong> menggunakan GPU, lalu disimpan sebagai model <code>.h5</code>.</p>
+        <a href="https://www.kaggle.com/datasets/gpiosenka/coffee-bean-dataset-resized-224-x-224" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:6px 14px;background:rgba(184,115,51,0.12);border:1px solid rgba(184,115,51,0.3);border-radius:var(--r-pill);font-size:0.8rem;color:var(--caramel);font-weight:600;transition:all .2s" onmouseover="this.style.background='rgba(184,115,51,0.25)'" onmouseout="this.style.background='rgba(184,115,51,0.12)'">
+          <i class="bi bi-box-arrow-up-right"></i> Lihat Dataset di Kaggle
+        </a>
       </div>
       <div class="about-card">
         <div class="about-card-icon"><i class="bi bi-stack"></i></div>
         <h4>Teknologi</h4>
+        <p style="font-size:0.83rem;color:var(--ink-soft);margin-bottom:10px">Stack lengkap yang digunakan dalam pengembangan aplikasi ini:</p>
         <div style="margin-top:8px">
-          <span class="tech-tag">Python 3.11</span><span class="tech-tag">TensorFlow 2.x</span>
-          <span class="tech-tag">MobileNetV2</span><span class="tech-tag">Flask</span>
+          <span class="tech-tag">Python 3.11</span><span class="tech-tag">TensorFlow 2.21</span>
+          <span class="tech-tag">MobileNetV2</span><span class="tech-tag">Flask 3.0</span>
           <span class="tech-tag">Flask-CORS</span><span class="tech-tag">Pillow</span>
-          <span class="tech-tag">NumPy</span><span class="tech-tag">Bootstrap Icons</span>
-          <span class="tech-tag">Vanilla JS</span>
+          <span class="tech-tag">NumPy</span><span class="tech-tag">Scikit-learn</span>
+          <span class="tech-tag">Google Colab</span><span class="tech-tag">Railway</span>
+          <span class="tech-tag">Bootstrap Icons</span><span class="tech-tag">Vanilla JS</span>
         </div>
       </div>
       <div class="about-card">
         <div class="about-card-icon"><i class="bi bi-cpu-fill"></i></div>
         <h4>Arsitektur Model</h4>
-        <p>MobileNetV2 Transfer Learning dari ImageNet. Fine-tuning 2 fase: fase 1 feature extraction, fase 2 unfreeze 30 layer terakhir. Akurasi test: <strong>95%</strong>.</p>
+        <p>MobileNetV2 dengan Transfer Learning dari ImageNet. Dilatih dengan strategi <strong>2-fase fine-tuning</strong>:</p>
+        <ul style="margin-top:8px;padding-left:18px;font-size:0.85rem;color:var(--ink-soft);line-height:1.8">
+          <li><strong>Fase 1:</strong> Feature extraction — base model di-freeze, hanya melatih Dense layers baru</li>
+          <li><strong>Fase 2:</strong> Fine-tuning — membuka 30 layer terakhir dengan learning rate kecil (5e-5)</li>
+        </ul>
+        <p style="margin-top:10px;font-size:0.85rem">Akurasi test: <strong style="color:var(--caramel)">95%+</strong> · Parameters: <strong>2.4M</strong> · Input: <strong>224×224px</strong></p>
       </div>
     </div>
 
