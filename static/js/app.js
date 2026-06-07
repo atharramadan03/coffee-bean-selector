@@ -277,7 +277,7 @@ function showQRDialog() {
       <div class="dialog-title">Coffee Bean AI</div>
       <div class="dialog-msg" style="margin-bottom:16px">Scan QR Code untuk membuka aplikasi di perangkat lain.</div>
       <div style="background:var(--parchment);border:2px solid var(--br-warm);border-radius:var(--r-md);padding:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
-        <img src="/static/img/qr.png" alt="QR Code" width="180" height="180" style="border-radius:6px;display:block" />
+        <img src="/static/img/qr-code.png" alt="QR Code" width="180" height="180" style="border-radius:6px;display:block" />
       </div>
       <div style="font-size:0.75rem;color:var(--ink-soft);margin-bottom:16px;word-break:break-all;background:rgba(184,115,51,0.08);padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--br-warm)">
         <i class="bi bi-link-45deg"></i> ${APP_URL}
