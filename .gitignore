@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+venv/
+env/
+.venv/
+.env
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.keras
+confusion_matrix.png
+training_history.png
+model_phase1_best.h5

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coffee Bean Selector AI</title>
+  <meta name="description" content="Identifikasi biji kopi dengan AI — Dark, Green, Light, Medium" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <div class="nav-brand">
+      <div class="nav-logo">☕</div>
+      <div class="nav-title">Coffee Bean <span class="accent">AI</span></div>
+    </div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="goTo('scanner')"><i class="bi bi-search"></i> Scan</button>
+      <button class="nav-link" onclick="goTo('history')"><i class="bi bi-clock-history"></i> Riwayat</button>
+      <button class="nav-link" onclick="goTo('alur-kerja')"><i class="bi bi-diagram-3"></i> Cara Kerja</button>
+      <button class="nav-link" onclick="goTo('about')"><i class="bi bi-info-circle"></i> Tentang</button>
+    </div>
+    <button class="nav-menu-btn" id="navMenuBtn" onclick="toggleMobileNav()" aria-label="Menu">
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+  <div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-link" onclick="goTo('scanner');closeMobileNav()"><i class="bi bi-search"></i> Scan</button>
+    <button class="mobile-nav-link" onclick="goTo('history');closeMobileNav()"><i class="bi bi-clock-history"></i> Riwayat</button>
+    <button class="mobile-nav-link" onclick="goTo('alur-kerja');closeMobileNav()"><i class="bi bi-diagram-3"></i> Cara Kerja</button>
+    <button class="mobile-nav-link" onclick="goTo('about');closeMobileNav()"><i class="bi bi-info-circle"></i> Tentang</button>
+  </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span class="badge-dot"></span> Powered by MobileNetV2 AI</div>
+      <h1 class="hero-h1">Coffee Bean<em>Selector AI</em></h1>
+      <p class="hero-p">Identifikasi jenis biji kopi secara instan menggunakan kecerdasan buatan. Upload foto atau gunakan kamera — AI menganalisis dalam hitungan milidetik.</p>
+      <div class="hero-stats">
+        <div><div class="stat-num">4</div><div class="stat-lbl">Kelas Kopi</div></div>
+        <div><div class="stat-num">224px</div><div class="stat-lbl">Input Size</div></div>
+        <div><div class="stat-num">2.4M</div><div class="stat-lbl">Parameters</div></div>
+        <div><div class="stat-num">95%</div><div class="stat-lbl">Akurasi</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="coffee-sphere">
+        ☕
+        <span class="bean-float" style="top:8%;right:8%;animation-delay:0s">🫘</span>
+        <span class="bean-float" style="bottom:10%;left:10%;animation-delay:1.8s">🫘</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCANNER + RESULT -->
+<div id="scanner" class="body-wrap">
+  <div class="section">
+    <div class="scan-grid">
+
+      <!-- Scanner -->
+      <div>
+        <div class="sec-header">
+          <div class="sec-eyebrow">Mulai Identifikasi</div>
+          <h2 class="sec-h2">Scan Biji Kopi</h2>
+          <div class="sec-line"></div>
+        </div>
+        <div class="scanner-card">
+          <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchTab('upload')"><i class="bi bi-cloud-arrow-up"></i> Upload</button>
+            <button class="tab-btn" onclick="switchTab('camera')"><i class="bi bi-camera-video"></i> Kamera</button>
+          </div>
+          <div class="scan-body">
+            <!-- Upload -->
+            <div class="tab-pane active" id="uploadPanel">
+              <div class="drop-zone" id="dropZone"
+                   onclick="document.getElementById('fileInput').click()"
+                   ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()">
+                <span class="dz-icon"><i class="bi bi-cloud-arrow-up"></i></span>
+                <div class="dz-title">Seret &amp; Lepas gambar di sini</div>
+                <div class="dz-sub">atau klik tombol di bawah</div>
+                <button class="btn-browse" type="button"><i class="bi bi-folder2-open"></i> Pilih Gambar</button>
+                <div class="dz-sub" style="margin-top:10px">JPG · PNG · WebP — Maks. 10 MB</div>
+              </div>
+              <input type="file" id="fileInput" accept="image/*" hidden onchange="handleFileSelect(event)" />
+              <div class="preview-wrap" id="uploadPreviewWrap">
+                <img id="uploadPreview" class="preview-img" src="" alt="Preview" />
+                <button class="preview-remove" onclick="clearUpload()"><i class="bi bi-x-lg"></i></button>
+              </div>
+            </div>
+            <!-- Camera -->
+            <div class="tab-pane" id="cameraPanel">
+              <div class="cam-box">
+                <div class="cam-empty" id="camEmpty">
+                  <i class="bi bi-camera-video"></i>
+                  <p>Kamera belum aktif</p>
+                  <p style="font-size:0.7rem;margin-top:3px;opacity:.6">Klik "Buka Kamera"</p>
+                </div>
+                <video id="cameraVideo" autoplay playsinline></video>
+                <div class="cam-reticle" id="camReticle"></div>
+                <canvas id="cameraCanvas"></canvas>
+              </div>
+              <div class="cam-controls">
+                <button class="btn btn-primary" onclick="startCamera()" id="btnOpenCam"><i class="bi bi-camera-video-fill"></i> Buka Kamera</button>
+                <button class="btn btn-outline" onclick="capturePhoto()" id="btnCapture" disabled><i class="bi bi-camera-fill"></i> Ambil Foto</button>
+                <button class="btn btn-outline" onclick="stopCamera()" id="btnStopCam" disabled><i class="bi bi-stop-circle"></i> Stop</button>
+              </div>
+              <div class="preview-wrap" id="camPreviewWrap" style="margin-top:14px">
+                <img id="camPreview" class="preview-img" src="" alt="Foto" />
+                <button class="preview-remove" onclick="clearCamera()"><i class="bi bi-x-lg"></i></button>
+              </div>
+            </div>
+            <!-- Analyze -->
+            <button class="btn-analyze" id="btnAnalyze" onclick="runPrediction()" disabled>
+              <span class="btn-shimmer"></span>
+              <i class="bi bi-stars"></i> Analisis Biji Kopi
+            </button>
+            <div class="loading-wrap" id="loadingWrap">
+              <div class="beans-row">
+                <div class="bean-dot"></div><div class="bean-dot"></div>
+                <div class="bean-dot"></div><div class="bean-dot"></div>
+              </div>
+              <p class="loading-text">AI sedang menganalisis biji kopi…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div>
+        <div class="sec-header">
+          <div class="sec-eyebrow">Output AI</div>
+          <h2 class="sec-h2">Hasil Identifikasi</h2>
+          <div class="sec-line"></div>
+        </div>
+        <div class="result-placeholder" id="resultPlaceholder">
+          <i class="bi bi-arrow-left-circle"></i>
+          <p style="font-weight:600;color:var(--ink-mid)">Upload atau ambil foto biji kopi</p>
+          <p style="font-size:0.78rem">Hasil identifikasi AI muncul di sini</p>
+        </div>
+        <div id="resultSection">
+          <div class="result-card animate-in">
+            <div class="result-head">
+              <div class="result-emoji" id="resultIcon">☕</div>
+              <div>
+                <div class="result-sublabel">Teridentifikasi sebagai</div>
+                <div class="result-name" id="resultKlass">—</div>
+              </div>
+            </div>
+            <div class="result-body">
+              <div class="conf-row">
+                <div class="conf-big" id="confNum">0<sub>%</sub></div>
+                <div class="conf-detail">
+                  <div class="conf-lbl">Tingkat Keyakinan AI</div>
+                  <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
+                </div>
+              </div>
+              <div class="chip-row">
+                <div class="chip"><i class="bi bi-lightning-charge-fill"></i><span id="metaTime">— ms</span></div>
+                <div class="chip"><i class="bi bi-calendar3"></i><span id="metaDate">—</span></div>
+                <div class="chip"><i class="bi bi-file-earmark-image"></i><span id="metaFile">—</span></div>
+              </div>
+              <div class="prob-wrap">
+                <div class="prob-title">Distribusi Probabilitas</div>
+                <div id="probBars"></div>
+              </div>
+              <div class="info-box">
+                <div class="info-title" id="infoTitle"></div>
+                <p class="info-desc" id="infoDesc"></p>
+                <ul class="char-list" id="infoChars"></ul>
+                <div class="brew-tag"><i class="bi bi-cup-hot-fill"></i><span id="infoBrew"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div id="history" class="section-alt">
+  <div class="section">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Log Prediksi</div>
+      <h2 class="sec-h2">Riwayat Scan</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="history-card">
+      <div class="history-head">
+        <div class="history-title"><i class="bi bi-clock-history"></i> Riwayat Prediksi</div>
+        <button class="btn-clear" onclick="clearHistory()"><i class="bi bi-trash3"></i> Hapus Semua</button>
+      </div>
+      <div class="history-empty" id="historyEmpty">
+        <i class="bi bi-inbox"></i>
+        <p style="font-weight:600;color:var(--ink-mid)">Belum ada riwayat</p>
+        <p style="font-size:0.74rem;margin-top:4px">Scan biji kopi pertamamu!</p>
+      </div>
+      <div class="history-table-wrap" id="historyTableWrap" style="display:none">
+        <table class="history-table">
+          <thead><tr><th>#</th><th>Nama File</th><th>Hasil</th><th>Confidence</th><th>Waktu</th></tr></thead>
+          <tbody id="historyTbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALUR KERJA (separate section) -->
+<div id="alur-kerja" class="section-alt">
+  <div class="section">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Cara Kerja</div>
+      <h2 class="sec-h2">Alur Kerja Aplikasi</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-icon"><i class="bi bi-image-fill"></i><span class="flow-num">1</span></div>
+        <div class="flow-lbl">Input Gambar</div>
+        <div class="flow-desc">Upload foto atau ambil gambar langsung via kamera perangkat</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon"><i class="bi bi-gear-fill"></i><span class="flow-num">2</span></div>
+        <div class="flow-lbl">Preprocessing</div>
+        <div class="flow-desc">Resize ke 224×224px, konversi RGB, normalisasi piksel 0–1</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon"><i class="bi bi-cpu-fill"></i><span class="flow-num">3</span></div>
+        <div class="flow-lbl">Analisis AI</div>
+        <div class="flow-desc">MobileNetV2 mengekstrak fitur dan menghitung probabilitas 4 kelas</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon"><i class="bi bi-bar-chart-fill"></i><span class="flow-num">4</span></div>
+        <div class="flow-lbl">Hasil &amp; Info</div>
+        <div class="flow-desc">Kelas, confidence score, dan rekomendasi seduhan ditampilkan</div>
+      </div>
+    </div>
+
+    <div class="flow-cards">
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <div class="flow-card-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+          <div><div class="flow-card-ttl">📤 Upload &amp; Kamera</div><div class="flow-card-sub">Langkah 1 — Input gambar</div></div>
+        </div>
+        <ul>
+          <li>Upload foto JPG, PNG, atau WebP (maks. 10MB)</li>
+          <li>Drag &amp; drop langsung ke area upload</li>
+          <li>Buka kamera perangkat secara real-time</li>
+          <li>Ambil foto langsung dengan tombol capture</li>
+          <li>Preview gambar sebelum dianalisis</li>
+        </ul>
+      </div>
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <div class="flow-card-icon"><i class="bi bi-sliders"></i></div>
+          <div><div class="flow-card-ttl">⚙️ Preprocessing Otomatis</div><div class="flow-card-sub">Langkah 2 — Persiapan data</div></div>
+        </div>
+        <ul>
+          <li>Konversi format ke RGB jika RGBA/grayscale</li>
+          <li>Resize gambar ke 224×224 piksel (LANCZOS)</li>
+          <li>Normalisasi piksel dari [0–255] ke [0–1]</li>
+          <li>Expand dimensi batch untuk input model</li>
+          <li>Proses otomatis di server Flask backend</li>
+        </ul>
+      </div>
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <div class="flow-card-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div><div class="flow-card-ttl">🧠 Inferensi MobileNetV2</div><div class="flow-card-sub">Langkah 3 — Analisis AI</div></div>
+        </div>
+        <ul>
+          <li>MobileNetV2 mengekstrak 1.280 fitur visual</li>
+          <li>Depthwise convolution mendeteksi pola warna &amp; tekstur</li>
+          <li>GlobalAveragePooling meringkas fitur spasial</li>
+          <li>Dense layers mengklasifikasikan ke 4 kelas</li>
+          <li>Softmax menghasilkan probabilitas 0–100% per kelas</li>
+        </ul>
+      </div>
+      <div class="flow-card">
+        <div class="flow-card-head">
+          <div class="flow-card-icon"><i class="bi bi-clipboard-data-fill"></i></div>
+          <div><div class="flow-card-ttl">📊 Output &amp; Hasil</div><div class="flow-card-sub">Langkah 4 — Tampilan hasil</div></div>
+        </div>
+        <ul>
+          <li>Nama kelas dengan confidence score (%)</li>
+          <li>Bar chart distribusi probabilitas 4 kelas</li>
+          <li>Deskripsi karakteristik biji kopi</li>
+          <li>Rekomendasi metode seduhan terbaik</li>
+          <li>Waktu inferensi dan riwayat prediksi tersimpan</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="body-wrap">
+  <div class="section">
+    <div class="sec-header">
+      <div class="sec-eyebrow">Informasi Aplikasi</div>
+      <h2 class="sec-h2">Tentang Coffee Bean AI</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-card-icon"><i class="bi bi-bullseye"></i></div>
+        <h4>Tujuan Aplikasi</h4>
+        <p>Membantu pecinta kopi, barista, pemilik kedai, petani, dan masyarakat mengidentifikasi biji kopi secara otomatis dan akurat menggunakan teknologi AI tanpa keahlian khusus.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon"><i class="bi bi-database-fill"></i></div>
+        <h4>Dataset</h4>
+        <p>Dataset dari Kaggle: <em>Coffee Bean Dataset Resized 224×224</em> oleh gpiosenka. Total ±1.600 gambar dibagi ke 4 kelas. Augmentasi: rotasi, flip, zoom, brightness.</p>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon"><i class="bi bi-stack"></i></div>
+        <h4>Teknologi</h4>
+        <div style="margin-top:8px">
+          <span class="tech-tag">Python 3.11</span><span class="tech-tag">TensorFlow 2.x</span>
+          <span class="tech-tag">MobileNetV2</span><span class="tech-tag">Flask</span>
+          <span class="tech-tag">Flask-CORS</span><span class="tech-tag">Pillow</span>
+          <span class="tech-tag">NumPy</span><span class="tech-tag">Bootstrap Icons</span>
+          <span class="tech-tag">Vanilla JS</span>
+        </div>
+      </div>
+      <div class="about-card">
+        <div class="about-card-icon"><i class="bi bi-cpu-fill"></i></div>
+        <h4>Arsitektur Model</h4>
+        <p>MobileNetV2 Transfer Learning dari ImageNet. Fine-tuning 2 fase: fase 1 feature extraction, fase 2 unfreeze 30 layer terakhir. Akurasi test: <strong>95%</strong>.</p>
+      </div>
+    </div>
+
+    <!-- Kelas yang Dikenali - full width separate section -->
+    <div class="classes-section">
+      <div class="classes-header">
+        <i class="bi bi-leaf-fill"></i>
+        <span>Kelas Biji Kopi yang Dikenali</span>
+      </div>
+      <div class="classes-grid">
+        <div class="class-card class-card-dark">
+          <div class="class-card-emoji">☕</div>
+          <div class="class-card-name">Dark Roast</div>
+          <div class="class-card-desc">Sangrai gelap, rasa bold &amp; smoky, aroma intens</div>
+          <div class="class-card-brew"><i class="bi bi-cup-hot-fill"></i> Espresso · Americano</div>
+        </div>
+        <div class="class-card class-card-green">
+          <div class="class-card-emoji">🌱</div>
+          <div class="class-card-name">Green (Mentah)</div>
+          <div class="class-card-desc">Biji mentah, kaya antioksidan, belum disangrai</div>
+          <div class="class-card-brew"><i class="bi bi-cup-hot-fill"></i> Green Coffee Extract</div>
+        </div>
+        <div class="class-card class-card-light">
+          <div class="class-card-emoji">🫖</div>
+          <div class="class-card-name">Light Roast</div>
+          <div class="class-card-desc">Sangrai ringan, fruity &amp; floral, keasaman cerah</div>
+          <div class="class-card-brew"><i class="bi bi-cup-hot-fill"></i> Pour Over · V60 · Chemex</div>
+        </div>
+        <div class="class-card class-card-medium">
+          <div class="class-card-emoji">☕</div>
+          <div class="class-card-name">Medium Roast</div>
+          <div class="class-card-desc">Sangrai sedang, rasa seimbang, pilihan universal</div>
+          <div class="class-card-brew"><i class="bi bi-cup-hot-fill"></i> Drip · French Press</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer">
+      <p>
+        <i class="bi bi-exclamation-triangle-fill" style="color:var(--caramel);margin-right:8px"></i>
+        <strong>Disclaimer:</strong> Coffee Bean Selector AI adalah alat bantu berbasis machine learning yang dilatih pada dataset terbatas. Hasil prediksi merupakan estimasi probabilistik dan tidak menjamin akurasi 100%. Untuk keputusan komersial, konsultasikan dengan ahli kopi berpengalaman. Aplikasi ini dibuat untuk tujuan edukasi dan penelitian.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 Coffee Bean Selector AI. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<div class="toast-stack" id="toastStack"></div>
+<script>
+function toggleMobileNav() {
+  const nav = document.getElementById('mobileNav');
+  nav.classList.toggle('open');
+}
+function closeMobileNav() {
+  document.getElementById('mobileNav').classList.remove('open');
+}
+// Close mobile nav on outside click
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.getElementById('navMenuBtn');
+  if (nav && btn && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+  }
+});
+</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
