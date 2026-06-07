@@ -267,7 +267,6 @@ function showQRDialog() {
   if (existing) existing.remove();
 
   const APP_URL = 'https://coffee-bean-selector.up.railway.app/';
-  const qrUrl = 'https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=' + encodeURIComponent(APP_URL) + '&chco=4a2c17&chf=bg,s,faf5ee';
 
   const overlay = document.createElement('div');
   overlay.id = 'qrDialog';
@@ -278,7 +277,7 @@ function showQRDialog() {
       <div class="dialog-title">Coffee Bean AI</div>
       <div class="dialog-msg" style="margin-bottom:16px">Scan QR Code untuk membuka aplikasi di perangkat lain.</div>
       <div style="background:var(--parchment);border:2px solid var(--br-warm);border-radius:var(--r-md);padding:16px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
-        <img src="${qrUrl}" alt="QR Code" width="180" height="180" style="border-radius:6px;display:block" onerror="this.parentElement.innerHTML='<div style=\'padding:20px;color:var(--ink-soft);font-size:0.85rem\'>QR tidak dapat dimuat.<br>Gunakan link di bawah.</div>'" />
+        <img src="/static/img/qr.png" alt="QR Code" width="180" height="180" style="border-radius:6px;display:block" />
       </div>
       <div style="font-size:0.75rem;color:var(--ink-soft);margin-bottom:16px;word-break:break-all;background:rgba(184,115,51,0.08);padding:8px 12px;border-radius:var(--r-sm);border:1px solid var(--br-warm)">
         <i class="bi bi-link-45deg"></i> ${APP_URL}
@@ -301,7 +300,7 @@ function showQRDialog() {
 
   document.getElementById('qrClose').onclick = close;
   document.getElementById('qrCopy').onclick = () => {
-    navigator.clipboard.writeText(APP_URL).then(() => toast('Link disalin!','success'));
+    navigator.clipboard.writeText(APP_URL).then(() => toast('Link disalin!', 'success'));
   };
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
   document.addEventListener('keydown', function esc(e) {
