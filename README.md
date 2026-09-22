@@ -5,6 +5,12 @@
 
 ---
 
+## 📜 Hak Kekayaan Intelektual (HKI)
+
+Aplikasi **Coffee Bean Selector AI** telah resmi terdaftar dan dilindungi oleh **Hak Kekayaan Intelektual (HKI) / Hak Cipta** di bawah **Kementerian Hukum Republik Indonesia** (Undang-Undang No. 28 Tahun 2014 tentang Hak Cipta).
+
+---
+
 ## 🎯 Kelas yang Dikenali
 
 | Kelas | Deskripsi | Brew |
